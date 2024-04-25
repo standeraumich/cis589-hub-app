@@ -1,0 +1,75 @@
+.hub-container {
+	height: 400px;
+	width: 300px;
+	background: #2b5870;
+	border-radius: 20px;
+	box-shadow: 10px 10px 38px 0px rgba(0, 0, 0, 0.75);
+	padding: 5%;
+	margin: 30px;
+}
+
+.hub-container:hover{
+	background: #2c2b70;
+	cursor: pointer;
+	transition: background 0.5s;
+}
+
+.hub-display-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 70%;
+}
+
+.hub-display {
+	display: flex;
+	border-radius: 50%;
+	color: #ffffff;
+	height: 220px;
+	width: 220px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	font-size: 48px;
+	border: 3px #ffffff solid;
+	transition: background 0.5s;
+}
+
+button:hover {
+	background: rgb(184, 184, 184);
+	cursor: pointer;
+}
+
+button:focus {
+	outline: 0;
+}
+
+.title-container {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	font-size: 32px;
+	color: #ffffff;
+
+}
+
+.temp-neutral {
+	background: rgb(184, 184, 184);
+}
+
+.temp-cold {
+	background: #035aa6;
+}
+
+.temp-hot {
+	background: #ff5200;
+}
+.high-humid{
+	background: #3d4675;
+}
+.med-humid{
+	background: #86ccbf;
+}
+.low-humid{
+	background: #e3060d;
+}

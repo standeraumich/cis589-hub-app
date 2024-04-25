@@ -1,0 +1,29 @@
+body {
+	font-family: sans-serif;
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	min-height: 100vh;
+}
+header{
+	font-family: sans-serif;
+	font-size: 50px;
+	text-align: center;
+}
+
+main{
+	padding: 32px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.parent-container{
+	display:flex;
+	justify-content: flex-end;
+	align-items: center;
+}
