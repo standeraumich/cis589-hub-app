@@ -21,9 +21,22 @@ main{
 	justify-content: center;
 	min-height: 100vh;
 }
-
-.parent-container{
-	display:flex;
-	justify-content: flex-end;
+/* Center the entire content */
+.parent-container {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
-}
+	justify-content: center;
+	height: 100vh; /* Adjust as needed */
+  }
+  
+  /* Center the header text */
+  h1 {
+	text-align: center;
+  }
+  
+  /* Center the image */
+  img {
+	display: block;
+	margin: 0 auto;
+  }

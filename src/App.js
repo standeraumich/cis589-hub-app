@@ -1,84 +1,100 @@
 import { useEffect, useState } from 'react';
 import Axios from 'axios';
 import Popup from "./Components/Popup";
-import Widget from "./Components/Widget"
 
 export default function App() {
 
-  const [sensorData, setSensorData] = useState({ sensors: {}, DataisLoaded: false })
-  const [tempColor, setTempColor] = useState("temp-cold");
-  const [humidColor, setHumidColor] = useState("med-humid")
+  const [birdData, setBirdData] = useState({ bird: {}, DataisLoaded: false })
+  const [imageUrl, setImageUrl] = useState("");
+  const [birdHasChanged, setBirdHasChanged] = useState(false);
   const [popUpTrigger, setPopUpTrigger] = useState(false)
-  const [graphType, setGraphType] = useState("")
-  const [graphTitle, setGraphTitle] = useState("")
 
-  async function updateSensorLatest() {
-    await Axios.get(`http://${process.env.REACT_APP_API_HOST}:3001/sensors/latest`)
+  async function updateBirdLatest() {
+    await Axios.get(`http://${process.env.REACT_APP_API_HOST}:3001/birds/latest`)
       .then((res) => {
-        const thermistor = res.data['thermistor']
-        const humidity = res.data['humidity']
-        if (thermistor <= 62) {
-          setTempColor("temp-cold")
-        } else if (thermistor > 62 && thermistor <= 72) {
-          setTempColor("temp-neutral")
-        } else {
-          setTempColor("temp-hot")
+        const birdInfo = res.data.data
+        console.log(birdInfo)
+        console.log(birdInfo[0])
+        console.log(birdInfo[1])
+        var birdDict = {}
+        birdDict['time'] = birdInfo[0];
+        birdDict['bird'] = birdInfo[1];
+        birdDict['lat'] = birdInfo[2];
+        birdDict['lon'] = birdInfo[3];
+        console.log(birdDict)
+        if (birdInfo[1] !== birdData['bird']['bird']) {
+          setBirdHasChanged(true)
         }
-
-        if (humidity <= 30) {
-          setHumidColor("low-humid")
-        } else if (humidity > 30 && humidity <= 60) {
-          setHumidColor("med-humid")
-        } else {
-          setHumidColor("high-humid")
-        }
-
-        setSensorData({
-          sensors: res.data,
+        setBirdData({
+          bird: birdDict,
           DataisLoaded: true
         })
       });
   }
-
-  function renderThermistor() {
-    const { DataisLoaded, sensors } = sensorData;
-    if (!DataisLoaded) {
-      return <div>Loading...</div>
-    }
-    else {
-      return sensors['thermistor']
+  async function getBirdImage() {
+    const bird = birdData["bird"]["bird"]
+    try {
+      const response = await Axios.get(
+        `https://api.unsplash.com/photos/random?query=${bird}&client_id=i7RoddcRb7XMxsfWJKJfI1SAuu4m7KPgz5Umdd7d3J4`
+      ).then((res) => {
+        const data = res.data;
+        setImageUrl(data.urls.regular)
+      });
+    } catch (error) {
+      console.error("Error fetching image: ", error)
     }
   }
 
-  function renderHumidity() {
-    const { DataisLoaded, sensors } = sensorData;
+  function renderBird() {
+    const { DataisLoaded, bird } = birdData;
     if (!DataisLoaded) {
       return <div>Loading...</div>
     }
     else {
-      return sensors['humidity']
+      if (birdHasChanged) {
+        getBirdImage()
+        setBirdHasChanged(false)
+      }
+      return bird["bird"]
+    }
+  }
+
+  function renderTime() {
+    const { DataisLoaded, bird } = birdData;
+    if (!DataisLoaded) {
+      return <div>Loading...</div>
+    } else {
+      const utcTime = new Date(bird["time"])
+      const convertedTime = utcTime.toLocaleString("en-US", { timeZone: "America/New_York" });
+      const timeArray = convertedTime.split(", ")
+      const timestring = `${timeArray[1]} on ${timeArray[0]}`
+      return timestring
     }
   }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      updateSensorLatest();
+      updateBirdLatest();
     }, 5000)
     return () => clearInterval(intervalId);
-  }, [sensorData.sensors])
+  }, [birdData.bird])
 
   return (
     <div>
       <main>
         <header>
-          <h1>Smart Home Hub</h1>
+          <h1>Heard Bird</h1>
         </header>
         <div className='parent-container'>
-          <Widget onClick={() => { setPopUpTrigger(true); setGraphType("thermistor"); setGraphTitle("All Temperature Data") }} color={tempColor} sensorData={renderThermistor()} title={"Temperature"} symbol={"°F"} />
-          <Widget onClick={() => { setPopUpTrigger(true); setGraphType("humidity"); setGraphTitle("All Humidity Data") }} color={humidColor} sensorData={renderHumidity()} title={"Humidity"} symbol={"%"} />
+          <h1>The latest bird I heard was a {renderBird()} at {renderTime()}</h1>
+          <button onClick={() => { setPopUpTrigger(true) }}>Bird History</button>
+          <div>
+            {imageUrl && <img src={imageUrl} alt="Bird!" />}
+          </div>
         </div>
       </main>
-      <Popup trigger={popUpTrigger} title={graphTitle} setTrigger={setPopUpTrigger} sensor={graphType} />
+      <Popup trigger={popUpTrigger} setTrigger={setPopUpTrigger} />
+
     </div>
   );
 }

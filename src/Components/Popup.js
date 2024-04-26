@@ -1,6 +1,7 @@
 import React from 'react'
 import './Popup.css'
-import Graph from './Graphs.js'
+import BirdTable from './BirdTable.js'
+
 
 function Popup(props) {
 
@@ -8,7 +9,7 @@ function Popup(props) {
         <div className='popup'>
             <div className="popup-inner">
                 <button className='close-btn' onClick={() => props.setTrigger(false)}>close</button>
-                <Graph title={props.title} sensor={props.sensor} />
+                <BirdTable />
             </div>
         </div>
     ) : "";
